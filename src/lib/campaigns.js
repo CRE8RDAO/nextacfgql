@@ -131,16 +131,14 @@ export async function getAllCampaigns(options = {}) {
   const data = await apolloClient.query({
     query: allCampaignsIncludesTypes[queryIncludes],
   });
- 
+  console.log("dunks411",data)
  // const campaigns = data?.data.ampliFiCampaigns.edges.map(({ node = {} }) => node);
 
 //  console.log("dunks411",campaigns)
 
-   return data 
-   //{
-  // //  campaigns: Array.isArray(campaigns) && campaigns.map(mapCampaignData),
-  // data
-  // };
+  return {
+    campaigns: Array.isArray(campaigns) && campaigns.map(mapCampaignData),
+  };
 }
 
 
@@ -308,6 +306,7 @@ export async function getPaginatedCampaigns({ currentPage = 1, ...options } = {}
   const { campaigns } = await getAllCampaigns(options);
   const campaignsPerPage = await getCampaignsPerPage();
   const pagesCount = await getPagesCount(campaigns, campaignsPerPage);
+  console.log("dunks411",campaigns)
 
   let page = Number(currentPage);
 

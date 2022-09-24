@@ -4,7 +4,7 @@ import { getPaginatedCampaigns } from 'lib/campaigns';
 
 import TemplateArchive from 'templates/archive-campaigns';
 
-export default function Posts({ posts, pagination }) {
+export default function Campaigns({ campaigns, pagination }) {
   const title = 'All Campaigns';
   const slug = 'campaigns';
 

@@ -116,11 +116,11 @@ async function getAllPosts(apolloClient, process, verbose = false) {
         data.categories = data.categories.edges.map(({ node }) => node.name);
       }
 
-      if (data.excerpt) {
-        //Sanitize the excerpt by removing all HTML tags
-        const regExHtmlTags = /(<([^>]+)>)/g;
-        data.excerpt = data.excerpt.replace(regExHtmlTags, '');
-      }
+      // if (data.excerpt) {
+      //   //Sanitize the excerpt by removing all HTML tags
+      //   const regExHtmlTags = /(<([^>]+)>)/g;
+      //   data.excerpt = data.excerpt.replace(regExHtmlTags, '');
+      // }
 
       return data;
     });

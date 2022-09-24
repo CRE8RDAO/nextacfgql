@@ -2,28 +2,26 @@ import { gql } from '@apollo/client';
 
 export const CAMPAIGN_FIELDS =gql`
 fragment CampaignFields on AmpliFiCampaign {
-  title
-  content
-  featuredImage {
-    node {
-      id
-    }
-  }
   id
-  slug
-  uri
-  
-}
-
-query AllCampaignsIndex {
- ampliFiCampaigns(first: 10000, where: {hasPassword: false}) {
-    edges {
-      node {
-        ...CampaignFields
+   categories{
+    edges{
+      node{
+        databaseId
+        id
+        name
+        slug
+        
       }
     }
   }
+  databaseId
+  date
+  slug
+  title
+  
 }
+
+
 `;
 
 export const QUERY_ALL_CAMPAIGNS_INDEX = gql`
@@ -101,6 +99,54 @@ export const QUERY_ALL_CAMPAIGNS_ARCHIVE = gql`
           excerpt
         }
       }
+    }
+  }
+`;
+
+export const QUERY_CAMPAIGN_BY_SLUG = gql`
+  query CampaignBySlug($slug: ID!) {
+    ampliFiCampaign(id: $slug, idType: SLUG) {
+      author {
+        node {
+          avatar {
+            height
+            url
+            width
+          }
+          id
+          name
+          slug
+        }
+      }
+      id
+      categories {
+        edges {
+          node {
+            databaseId
+            id
+            name
+            slug
+          }
+        }
+      }
+      content
+      date
+    
+      featuredImage {
+        node {
+          altText
+          caption
+          sourceUrl
+          srcSet
+          sizes
+          id
+        }
+      }
+      modified
+      databaseId
+      title
+      slug
+     
     }
   }
 `;
