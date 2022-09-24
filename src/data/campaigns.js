@@ -105,50 +105,48 @@ export const QUERY_ALL_CAMPAIGNS_ARCHIVE = gql`
 
 export const QUERY_CAMPAIGN_BY_SLUG = gql`
   query CampaignBySlug($slug: ID!) {
-    ampliFiCampaign(id: $slug, idType: SLUG) {
-      author {
+  ampliFiCampaign(id: $slug, idType: SLUG) {
+    author {
+      node {
+        avatar {
+          height
+          url
+          width
+        }
+        id
+        name
+        slug
+      }
+    }
+    id
+    categories {
+      edges {
         node {
-          avatar {
-            height
-            url
-            width
-          }
+          databaseId
           id
           name
           slug
         }
       }
-      id
-      categories {
-        edges {
-          node {
-            databaseId
-            id
-            name
-            slug
-          }
-        }
-      }
-      content
-      date
-    
-      featuredImage {
-        node {
-          altText
-          caption
-          sourceUrl
-          srcSet
-          sizes
-          id
-        }
-      }
-      modified
-      databaseId
-      title
-      slug
-     
     }
+    content
+    date
+    featuredImage {
+      node {
+        altText
+        caption
+        sourceUrl
+        srcSet
+        sizes
+        id
+      }
+    }
+    modified
+    databaseId
+    title
+    slug
   }
+}
 `;
 
 

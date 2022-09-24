@@ -7,12 +7,12 @@ import {
   QUERY_ALL_CAMPAIGNS_INDEX,
   QUERY_ALL_CAMPAIGNS_ARCHIVE,
   QUERY_ALL_CAMPAIGNS,
-  QUERY_CAMPAIGNS_BY_SLUG,
+  QUERY_CAMPAIGN_BY_SLUG,
   
 } from 'data/campaigns';
 
 /**
- * postPathBySlug
+ * campaignPathBySlug
  */
 
 export function campaignPathBySlug(slug) {
@@ -20,31 +20,31 @@ export function campaignPathBySlug(slug) {
 }
 console.log("dunks411", "a fish")
 /**
- * getPostBySlug
+ * getCampaignBySlug
  */
 
 export async function getCampaignBySlug(slug) {
   const apolloClient = getApolloClient();
   const apiHost = new URL(process.env.WORDPRESS_GRAPHQL_ENDPOINT).host;
 
-  let postData;
+  let campaignData;
   let seoData;
 
   try {
-    postData = await apolloClient.query({
+    campaignData = await apolloClient.query({
       query: QUERY_CAMPAIGN_BY_SLUG,
       variables: {
         slug,
       },
     });
   } catch (e) {
-    console.log(`[campaigns][getPostBySlug] Failed to query post data: ${e.message}`);
+    console.log(`[campaigns][getCampaignBySlug] Failed to query campaign data: ${e.message}`);
     throw e;
   }
+  console.log(`[campaigns][getCampaignBySlug]`);
+  if (!campaignData?.data.campaign) return { campaign: undefined };
 
-  if (!postData?.data.post) return { post: undefined };
-
-  const post = [postData?.data.post].map(mapPostData)[0];
+  const campaign = [campaignData?.data.campaign].map(mapCampaignData)[0];
 
   // If the SEO plugin is enabled, look up the data
   // and apply it to the default settings
@@ -58,16 +58,16 @@ export async function getCampaignBySlug(slug) {
         },
       });
     } catch (e) {
-      console.log(`[campaigns][getPostBySlug] Failed to query SEO plugin: ${e.message}`);
+      console.log(`[campaigns][getCampaignBySlug] Failed to query SEO plugin: ${e.message}`);
       console.log('Is the SEO Plugin installed? If not, disable WORDPRESS_PLUGIN_SEO in next.config.js.');
       throw e;
     }
 
-    const { seo = {} } = seoData?.data?.post || {};
+    const { seo = {} } = seoData?.data?.campaign || {};
 
-    post.metaTitle = seo.title;
-    post.metaDescription = seo.metaDesc;
-    post.readingTime = seo.readingTime;
+    campaign.metaTitle = seo.title;
+    campaign.metaDescription = seo.metaDesc;
+    campaign.readingTime = seo.readingTime;
 
     // The SEO plugin by default includes a canonical link, but we don't want to use that
     // because it includes the WordPress host, not the site host. We manage the canonical
@@ -75,10 +75,10 @@ export async function getCampaignBySlug(slug) {
     // in here by looking for the API's host in the provided canonical link
 
     if (seo.canonical && !seo.canonical.includes(apiHost)) {
-      post.canonical = seo.canonical;
+      campaign.canonical = seo.canonical;
     }
 
-    post.og = {
+    campaign.og = {
       author: seo.opengraphAuthor,
       description: seo.opengraphDescription,
       image: seo.opengraphImage,
@@ -89,19 +89,19 @@ export async function getCampaignBySlug(slug) {
       type: seo.opengraphType,
     };
 
-    post.article = {
-      author: post.og.author,
-      modifiedTime: post.og.modifiedTime,
-      publishedTime: post.og.publishedTime,
-      publisher: post.og.publisher,
+    campaign.article = {
+      author: campaign.og.author,
+      modifiedTime: campaign.og.modifiedTime,
+      publishedTime: campaign.og.publishedTime,
+      publisher: campaign.og.publisher,
     };
 
-    post.robots = {
+    campaign.robots = {
       nofollow: seo.metaRobotsNofollow,
       noindex: seo.metaRobotsNoindex,
     };
 
-    post.twitter = {
+    campaign.twitter = {
       description: seo.twitterDescription,
       image: seo.twitterImage,
       title: seo.twitterTitle,
@@ -110,6 +110,17 @@ export async function getCampaignBySlug(slug) {
 
   return {
     campaign,
+  };
+}
+/**
+ * getRecentCampaigns
+ */
+
+ export async function getRecentCampaigns({ count, ...options }) {
+  const { campaigns } = await getAllCampaigns(options);
+  const sorted = sortObjectsByDate(campaigns);
+  return {
+    campaigns: sorted.slice(0, count),
   };
 }
 
@@ -176,7 +187,7 @@ export function sanitizeExcerpt(excerpt) {
 }
 
 /**
- * mapPostData
+ * mapCampaignData
  */
 
 export function mapCampaignData(ampliFiCampaign = {}) {
@@ -223,7 +234,7 @@ export function mapCampaignData(ampliFiCampaign = {}) {
  * getRelatedCampaigns
  */
 
-export async function getRelatedCampaigns(categories, postId, count = 5) {
+export async function getRelatedCampaigns(categories, campaignId, count = 5) {
   if (!Array.isArray(categories) || categories.length === 0) return;
 
   let related = {
@@ -236,14 +247,14 @@ export async function getRelatedCampaigns(categories, postId, count = 5) {
       queryIncludes: 'archive',
     });
 
-    const filtered = campaigns.filter(({ postId: id }) => id !== postId);
+    const filtered = campaigns.filter(({ campaignId: id }) => id !== campaignId);
     const sorted = sortObjectsByDate(filtered);
 
-    related.campaigns = sorted.map((post) => ({ title: post.title, slug: post.slug }));
+    related.campaigns = sorted.map((campaign) => ({ title: campaign.title, slug: campaign.slug }));
   }
 
   if (!Array.isArray(related.campaigns) || related.campaigns.length === 0) {
-    const relatedCampaigns = await getRelatedCampaigns(categories, postId, count);
+    const relatedCampaigns = await getRelatedCampaigns(categories, campaignId, count);
     related = relatedCampaigns || related;
   }
 
@@ -259,7 +270,7 @@ export async function getRelatedCampaigns(categories, postId, count = 5) {
  */
 
 export function sortStickyCampaigns(campaigns) {
-  return [...campaigns].sort((post) => (post.isSticky ? -1 : 1));
+  return [...campaigns].sort((campaign) => (campaign.isSticky ? -1 : 1));
 }
 
 /**
@@ -284,7 +295,7 @@ export async function getCampaignsPerPage() {
 
     return Number(data.allSettings.readingSettingsCampaignsPerPage);
   } catch (e) {
-    console.log(`Failed to query post per page data: ${e.message}`);
+    console.log(`Failed to query campaign per page data: ${e.message}`);
     throw e;
   }
 }
