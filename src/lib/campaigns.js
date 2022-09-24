@@ -45,6 +45,7 @@ export async function getCampaignBySlug(slug) {
   if (!campaignData?.data.campaign) return { campaign: undefined };
 
   const campaign = [campaignData?.data.campaign].map(mapCampaignData)[0];
+  console.log("campaign = dunks411",campaign)
 
   // If the SEO plugin is enabled, look up the data
   // and apply it to the default settings
@@ -142,17 +143,18 @@ export async function getAllCampaigns(options = {}) {
   const data = await apolloClient.query({
     query: allCampaignsIncludesTypes[queryIncludes],
   });
-  console.log("dunks411",data)
+  console.log("dunks411 this is inside of lib campaigns.js",data)
  // const campaigns = data?.data.ampliFiCampaigns.edges.map(({ node = {} }) => node);
 
 //  console.log("dunks411",campaigns)
 
   return {
     campaigns: Array.isArray(campaigns) && campaigns.map(mapCampaignData),
+    
   };
 }
 
-
+console.log("after return",campaigns)
 
 
 
@@ -190,8 +192,8 @@ export function sanitizeExcerpt(excerpt) {
  * mapCampaignData
  */
 
-export function mapCampaignData(ampliFiCampaign = {}) {
-  const data = { ...ampliFiCampaign };
+export function mapCampaignData(campaign = {}) {
+  const data = { ...campaign };
 
   // Clean up the author object to avoid someone having to look an extra
   // level deeper into the node
@@ -317,7 +319,7 @@ export async function getPaginatedCampaigns({ currentPage = 1, ...options } = {}
   const { campaigns } = await getAllCampaigns(options);
   const campaignsPerPage = await getCampaignsPerPage();
   const pagesCount = await getPagesCount(campaigns, campaignsPerPage);
-  console.log("dunks411",campaigns)
+  console.log("dunks411 this is inside of lib campaigns on line 321",campaigns)
 
   let page = Number(currentPage);
 

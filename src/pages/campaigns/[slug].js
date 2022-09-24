@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import { Helmet } from 'react-helmet';
 
-//import { getPostBySlug, getRecentPosts, getRelatedPosts, campaignPathBySlug } from 'lib/campaigns';
+//import { getCampaignBySlug, getRecentCampaigns, getRelatedCampaigns, campaignPathBySlug } from 'lib/campaigns';
 import { getCampaignBySlug, getRecentCampaigns, getRelatedCampaigns, campaignPathBySlug   } from 'lib/campaigns';
 import { categoryPathBySlug } from 'lib/categories';
 import { formatDate } from 'lib/datetime';
-import { ArticleJsonLd } from 'lib/json-ld';
+import { CampaignArticleJsonLd } from 'lib/json-ld';
 import { helmetSettingsFromMetadata } from 'lib/site';
 import useSite from 'hooks/use-site';
 import usePageMetadata from 'hooks/use-page-metadata';
@@ -18,9 +18,9 @@ import Content from 'components/Content';
 import Metadata from 'components/Metadata';
 import FeaturedImage from 'components/FeaturedImage';
 
-import styles from 'styles/pages/Post.module.scss';
+import styles from 'styles/pages/Campaign.module.scss';
 
-export default function Post({ campaign, socialImage, related }) {
+export default function Campaign({ campaign, socialImage, related }) {
   const {
     title,
     metaTitle,
@@ -30,8 +30,8 @@ export default function Post({ campaign, socialImage, related }) {
     author,
     categories,
     modified,
-    featuredImage,
-    isSticky = false,
+    featuredImage
+    
   } = campaign;
 
   const { metadata: siteMetadata = {}, homepage } = useSite();
@@ -63,7 +63,7 @@ export default function Post({ campaign, socialImage, related }) {
     compactCategories: false,
   };
 
-  const { campaigns: relatedPostsList, title: relatedPostsTitle } = related || {};
+  const { campaigns: relatedCampaignsList, title: relatedCampaignsTitle } = related || {};
 
   const helmetSettings = helmetSettingsFromMetadata(metadata);
 
@@ -71,7 +71,7 @@ export default function Post({ campaign, socialImage, related }) {
     <Layout>
       <Helmet {...helmetSettings} />
 
-      <ArticleJsonLd campaign={campaign} siteTitle={siteMetadata.title} />
+      <CampaignArticleJsonLd campaign={campaign} siteTitle={siteMetadata.title} />
 
       <Header>
         {featuredImage && (
@@ -113,22 +113,23 @@ export default function Post({ campaign, socialImage, related }) {
       <Section className={styles.campaignFooter}>
         <Container>
           <p className={styles.campaignModified}>Last updated on {formatDate(modified)}.</p>
-          {Array.isArray(relatedPostsList) && relatedPostsList.length > 0 && (
-            <div className={styles.relatedPosts}>
-              {relatedPostsTitle.name ? (
+          {Array.isArray(relatedCampaignsList) && relatedCampaignsList.length > 0 && (
+            <div className={styles.relatedCampaigns}>
+              {relatedCampaignsTitle.name ? (
                 <span>
                   More from{' '}
-                  <Link href={relatedPostsTitle.link}>
-                    <a>{relatedPostsTitle.name}</a>
+                  <Link href={relatedCampaignsTitle.link}>
+                    <a>{relatedCampaignsTitle.name}</a>
                   </Link>
                 </span>
               ) : (
-                <span>More Posts</span>
+                <span>More Campaigns</span>
               )}
               <ul>
-                {relatedPostsList.map((campaign) => (
+                {relatedCampaignsList.map((campaign) => (
                   <li key={campaign.title}>
                     <Link href={campaignPathBySlug(campaign.slug)}>
+                      console.log("campaign", campaignPathBySlug(campaign.slug));
                       <a>{campaign.title}</a>
                     </Link>
                   </li>
@@ -143,7 +144,7 @@ export default function Post({ campaign, socialImage, related }) {
 }
 
 export async function getStaticProps({ params = {} } = {}) {
-  const { campaign } = await getPostBySlug(params?.slug);
+  const { campaign } = await getCampaignBySlug(params?.slug);
 
   if (!campaign) {
     return {
@@ -154,13 +155,15 @@ export async function getStaticProps({ params = {} } = {}) {
 
   const { categories, databaseId: campaignId } = campaign;
 
+  console.log('campaign dunks', campaign);
+
   const props = {
     campaign,
     socialImage: `${process.env.OG_IMAGE_DIRECTORY}/${params?.slug}.png`,
   };
-
+// todo: fix campaignId
   const { category: relatedCategory, campaigns: relatedCampaigns } = (await getRelatedCampaigns(categories, campaignId)) || {};
-  const hasRelated = relatedCategory && Array.isArray(relatedPosts) && relatedPosts.length;
+  const hasRelated = relatedCategory && Array.isArray(relatedCampaigns) && relatedCampaigns.length;
 
   if (hasRelated) {
     props.related = {

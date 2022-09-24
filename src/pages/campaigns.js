@@ -15,7 +15,7 @@ export default function Campaigns({ campaigns, pagination }) {
     },
   });
 
-  return <TemplateArchive title={title} campaigns={campaigns} slug={slug} pagination={pagination} metadata={metadata} />;
+  return <TemplateArchiveCampaigns title={title} campaigns={campaigns} slug={slug} pagination={pagination} metadata={metadata} />;
 }
 
 export async function getStaticProps() {

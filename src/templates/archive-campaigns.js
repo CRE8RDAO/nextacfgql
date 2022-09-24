@@ -9,15 +9,15 @@ import Header from 'components/Header';
 import Section from 'components/Section';
 import Container from 'components/Container';
 import SectionTitle from 'components/SectionTitle';
-import PostCard from 'components/PostCard';
+import CampaignCard from 'components/PostCard';
 import Pagination from 'components/Pagination/Pagination';
 
 import styles from 'styles/templates/Archive.module.scss';
 
 const DEFAULT_POST_OPTIONS = {};
 
-export default function TemplateArchive({
-  title = 'Archive',
+export default function TemplateArchiveCampaigns({
+  title = 'CampaignsArchive',
   Title,
   posts,
   postOptions = DEFAULT_POST_OPTIONS,
@@ -57,14 +57,14 @@ export default function TemplateArchive({
 
       <Section>
         <Container>
-          <SectionTitle>Posts</SectionTitle>
-          {Array.isArray(posts) && (
+          <SectionTitle>Campaigns</SectionTitle>
+          {Array.isArray(campaigns) && (
             <>
               <ul className={styles.posts}>
-                {posts.map((post) => {
+                {campaigns.map((campaign) => {
                   return (
-                    <li key={post.slug}>
-                      <PostCard post={post} options={postOptions} />
+                    <li key={campaign.slug}>
+                      <CampaignCard campaign={campaign} options={campaignOptions} />
                     </li>
                   );
                 })}

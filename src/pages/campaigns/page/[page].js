@@ -1,11 +1,11 @@
-import { getPaginatedCampaigns } from 'lib/campaings';
+import { getPaginatedCampaigns } from 'lib/campaigns';
 import usePageMetadata from 'hooks/use-page-metadata';
 
 import TemplateArchive from 'templates/archive';
 
-export default function Posts({ posts, pagination }) {
+export default function Campaigns({ campaigns, pagination }) {
   const title = `All Campaigns`;
-  const slug = 'posts';
+  const slug = 'campaigns';
 
   const { metadata } = usePageMetadata({
     metadata: {
@@ -14,11 +14,11 @@ export default function Posts({ posts, pagination }) {
     },
   });
 
-  return <TemplateArchive title={title} posts={posts} slug={slug} pagination={pagination} metadata={metadata} />;
+  return <TemplateArchive title={title} campaigns={campaigns} slug={slug} pagination={pagination} metadata={metadata} />;
 }
 
 export async function getStaticProps({ params = {} } = {}) {
-  const { posts, pagination } = await getPaginatedPosts({
+  const { campaigns, pagination } = await getPaginatedCampaigns({
     currentPage: params?.page,
     queryIncludes: 'archive',
   });
@@ -32,7 +32,7 @@ export async function getStaticProps({ params = {} } = {}) {
 
   return {
     props: {
-      posts,
+      campaigns,
       pagination: {
         ...pagination,
         basePath: '/campaigns',
@@ -49,14 +49,14 @@ export async function getStaticPaths() {
 
   // 1. Add import to the top of the file
   //
-  // import { getAllPosts, getPagesCount } from 'lib/posts';
+  // import { getAllCampaigns, getPagesCount } from 'lib/campaigns';
 
   // 2. Uncomment the below
   //
-  // const { posts } = await getAllPosts({
+  // const { campaigns } = await getAllCampaigns({
   //   queryIncludes: 'index',
   // });
-  // const pagesCount = await getPagesCount(posts);
+  // const pagesCount = await getPagesCount(campaigns);
 
   // const paths = [...new Array(pagesCount)].map((_, i) => {
   //   return { params: { page: String(i + 1) } };
