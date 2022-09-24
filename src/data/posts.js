@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export const POST_FIELDS = gql`
-  fragment PostFields on Post {
+  fragment PostFields on AmpliFiCampaign {
     id
     categories {
       edges {
@@ -15,17 +15,18 @@ export const POST_FIELDS = gql`
     }
     databaseId
     date
-    isSticky
-    postId
     slug
     title
+    amplifiCampaignFields {
+      baseUrl
+    }
   }
 `;
 
 export const QUERY_ALL_POSTS_INDEX = gql`
   ${POST_FIELDS}
   query AllPostsIndex {
-    posts(first: 10000, where: { hasPassword: false }) {
+    ampliFiCampaigns(first: 10000) {
       edges {
         node {
           ...PostFields
@@ -38,7 +39,7 @@ export const QUERY_ALL_POSTS_INDEX = gql`
 export const QUERY_ALL_POSTS_ARCHIVE = gql`
   ${POST_FIELDS}
   query AllPostsArchive {
-    posts(first: 10000, where: { hasPassword: false }) {
+    ampliFiCampaigns(first: 10000, where: { hasPassword: false }) {
       edges {
         node {
           ...PostFields
@@ -64,7 +65,7 @@ export const QUERY_ALL_POSTS_ARCHIVE = gql`
 export const QUERY_ALL_POSTS = gql`
   ${POST_FIELDS}
   query AllPosts {
-    posts(first: 10000, where: { hasPassword: false }) {
+    ampliFiCampaigns(first: 10000, where: { hasPassword: false }) {
       edges {
         node {
           ...PostFields
@@ -101,7 +102,7 @@ export const QUERY_ALL_POSTS = gql`
 
 export const QUERY_POST_BY_SLUG = gql`
   query PostBySlug($slug: ID!) {
-    post(id: $slug, idType: SLUG) {
+    ampliFiCampaign(id: $slug, idType: SLUG) {
       author {
         node {
           avatar {
@@ -150,7 +151,7 @@ export const QUERY_POST_BY_SLUG = gql`
 export const QUERY_POSTS_BY_CATEGORY_ID_INDEX = gql`
   ${POST_FIELDS}
   query PostsByCategoryId($categoryId: Int!) {
-    posts(where: { categoryId: $categoryId, hasPassword: false }) {
+    ampliFiCampaigns(where: { categoryId: $categoryId, hasPassword: false }) {
       edges {
         node {
           ...PostFields
@@ -163,7 +164,7 @@ export const QUERY_POSTS_BY_CATEGORY_ID_INDEX = gql`
 export const QUERY_POSTS_BY_CATEGORY_ID_ARCHIVE = gql`
   ${POST_FIELDS}
   query PostsByCategoryId($categoryId: Int!) {
-    posts(where: { categoryId: $categoryId, hasPassword: false }) {
+    ampliFiCampaigns(where: { categoryId: $categoryId, hasPassword: false }) {
       edges {
         node {
           ...PostFields
@@ -189,7 +190,7 @@ export const QUERY_POSTS_BY_CATEGORY_ID_ARCHIVE = gql`
 export const QUERY_POSTS_BY_CATEGORY_ID = gql`
   ${POST_FIELDS}
   query PostsByCategoryId($categoryId: Int!) {
-    posts(where: { categoryId: $categoryId, hasPassword: false }) {
+    ampliFiCampaigns(where: { categoryId: $categoryId, hasPassword: false }) {
       edges {
         node {
           ...PostFields
@@ -227,7 +228,7 @@ export const QUERY_POSTS_BY_CATEGORY_ID = gql`
 export const QUERY_POSTS_BY_AUTHOR_SLUG_INDEX = gql`
   ${POST_FIELDS}
   query PostByAuthorSlugIndex($slug: String!) {
-    posts(where: { authorName: $slug, hasPassword: false }) {
+    ampliFiCampaigns(where: { authorName: $slug, hasPassword: false }) {
       edges {
         node {
           ...PostFields
@@ -240,7 +241,7 @@ export const QUERY_POSTS_BY_AUTHOR_SLUG_INDEX = gql`
 export const QUERY_POSTS_BY_AUTHOR_SLUG_ARCHIVE = gql`
   ${POST_FIELDS}
   query PostByAuthorSlugArchive($slug: String!) {
-    posts(where: { authorName: $slug, hasPassword: false }) {
+    ampliFiCampaigns(where: { authorName: $slug, hasPassword: false }) {
       edges {
         node {
           ...PostFields
@@ -254,7 +255,7 @@ export const QUERY_POSTS_BY_AUTHOR_SLUG_ARCHIVE = gql`
 export const QUERY_POSTS_BY_AUTHOR_SLUG = gql`
   ${POST_FIELDS}
   query PostByAuthorSlug($slug: String!) {
-    posts(where: { authorName: $slug, hasPassword: false }) {
+    ampliFiCampaigns(where: { authorName: $slug, hasPassword: false }) {
       edges {
         node {
           ...PostFields
@@ -278,7 +279,7 @@ export const QUERY_POSTS_BY_AUTHOR_SLUG = gql`
 
 export const QUERY_POST_SEO_BY_SLUG = gql`
   query PostSEOBySlug($slug: ID!) {
-    post(id: $slug, idType: SLUG) {
+    ampliFiCampaigns(id: $slug, idType: SLUG) {
       id
       seo {
         canonical

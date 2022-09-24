@@ -132,14 +132,12 @@ const allPostsIncludesTypes = {
 
 export async function getAllPosts(options = {}) {
   const { queryIncludes = 'index' } = options;
-
   const apolloClient = getApolloClient();
 
   const data = await apolloClient.query({
     query: allPostsIncludesTypes[queryIncludes],
   });
-
-  const posts = data?.data.posts.edges.map(({ node = {} }) => node);
+  const posts = data?.data.ampliFiCampaigns.edges.map(({ node = {} }) => node);
 
   return {
     posts: Array.isArray(posts) && posts.map(mapPostData),
@@ -342,7 +340,7 @@ export async function getRelatedPosts(categories, postId, count = 5) {
  */
 
 export function sortStickyPosts(posts) {
-  return [...posts].sort((post) => (post.isSticky ? -1 : 1));
+  return [...posts]; //.sort((post) => (post.isSticky ? -1 : 1));
 }
 
 /**
